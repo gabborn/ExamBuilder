@@ -1,0 +1,37 @@
+@model ExamBuilder.Models.Kapitel
+
+@{
+    ViewData["Title"] = "Kapitel löschen";
+}
+
+<div class="mb-3">
+    <a asp-action="Index" asp-route-lehrveranstaltungId="@Model.LehrveranstaltungId" class="text-muted text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Kapitel
+    </a>
+</div>
+
+<h2>Kapitel löschen</h2>
+<hr />
+
+<dl class="row mb-3">
+    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Titel)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(model => model.Titel)</dd>
+    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Kapitelnummer)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(model => model.Kapitelnummer)</dd>
+</dl>
+
+<div class="alert alert-danger">
+    Sind Sie sicher, dass dieses Kapitel gelöscht werden soll? Alle zugehörigen MC-Fragen und Antworten werden ebenfalls gelöscht.
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Löschen
+        </button>
+        <a asp-action="Index" asp-route-lehrveranstaltungId="@Model.LehrveranstaltungId" class="btn btn-secondary">
+            <i class="bi bi-x-lg"></i> Abbrechen
+        </a>
+    </div>
+</form>

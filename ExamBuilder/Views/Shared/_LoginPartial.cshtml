@@ -1,0 +1,51 @@
+@using Microsoft.AspNetCore.Identity
+@using ExamBuilder.Models
+@inject SignInManager<ExamBuilderUser> SignInManager
+@inject UserManager<ExamBuilderUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var user = await UserManager.GetUserAsync(User);
+    var isAdmin = User.IsInRole("Administrator");
+    var isDozent = User.IsInRole("Dozent");
+
+    string icon = isAdmin ? "bi-shield-fill text-warning" : isDozent ? "bi-mortarboard-fill text-info" : "bi-person-fill text-secondary";
+    string rollenName = isAdmin ? "Administrator" : isDozent ? "Dozent" : "Mitarbeiter";
+
+    <span class="navbar-text me-3 text-dark">
+        <i class="bi @icon"></i> @user?.Vorname @user?.Nachname
+        <small class="text-muted ms-1">(@rollenName)</small>
+    </span>
+
+    <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#logoutModal">
+        <i class="bi bi-box-arrow-right"></i> Abmelden
+    </button>
+
+    <div class="modal fade" id="logoutModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Abmelden</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Möchten Sie sich wirklich abmelden?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-box-arrow-right"></i> Ja, abmelden
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-sm">
+        <i class="bi bi-box-arrow-in-right"></i> Anmelden
+    </a>
+}

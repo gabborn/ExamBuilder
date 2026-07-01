@@ -1,0 +1,33 @@
+@model ExamBuilder.Models.Lehrveranstaltung
+
+@{
+    ViewData["Title"] = "Lehrveranstaltung löschen";
+}
+
+<h2>Lehrveranstaltung löschen</h2>
+<hr />
+
+<dl class="row mb-3">
+    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Titel)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(model => model.Titel)</dd>
+    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Dozentenname)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(model => model.Dozentenname)</dd>
+    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Abschlussart)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(model => model.Abschlussart)</dd>
+</dl>
+
+<div class="alert alert-danger">
+    Sind Sie sicher, dass diese Lehrveranstaltung gelöscht werden soll? Alle zugehörigen Prüfungen, Lehrinhalte und MC-Fragen werden ebenfalls gelöscht.
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Löschen
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-x-lg"></i> Abbrechen
+        </a>
+    </div>
+</form>

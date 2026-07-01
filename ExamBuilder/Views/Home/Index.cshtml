@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Startseite";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <img src="/Logo-ExamBuilder.png" alt="ExamBuilder Logo" class="mb-4" style="max-height: 150px;" />
+            <h1 class="display-4 fw-bold mb-3">ExamBuilder</h1>
+            <p class="lead mb-4">
+                Verwalten Sie Lehrveranstaltungen, Lehrinhalte und Prüfungsfragen und erstellen Sie MC-Prüfungen mit KI-Unterstützung.
+            </p>
+            <a asp-controller="Lehrveranstaltung" asp-action="Index" class="btn btn-primary btn-lg">
+                Zu den Lehrveranstaltungen
+            </a>
+        </div>
+    </div>
+</div>

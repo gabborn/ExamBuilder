@@ -1,0 +1,314 @@
+@model IEnumerable<ExamBuilder.Models.ExamBuilderUser>
+@{
+    ViewData["Title"] = "Benutzerverwaltung";
+    var userRoles = ViewBag.UserRoles as Dictionary<string, string>;
+    var currentUserId = ViewBag.CurrentUserId as string;
+
+    string RolleIcon(string rolle) => rolle switch
+    {
+        "Administrator" => "bi-shield-fill text-warning",
+        "Dozent" => "bi-mortarboard-fill text-info",
+        _ => "bi-person-fill text-secondary"
+    };
+}
+
+<h2 class="mb-4">Benutzerverwaltung</h2>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Vorname</th>
+            <th>Nachname</th>
+            <th>Benutzername</th>
+            <th>E-Mail</th>
+            <th>Rolle</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            var rolle = userRoles![user.Id];
+            <tr>
+                <td>@user.Vorname</td>
+                <td>@user.Nachname</td>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td><i class="bi @RolleIcon(rolle)"></i> @rolle</td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn btn-success btn-sm"
+                                onclick="openEditModal('@user.Id', '@user.Vorname', '@user.Nachname', '@user.UserName', '@user.Email', '@rolle')">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm"
+                                @(user.Id == currentUserId ? "disabled" : "")
+                                onclick="openDeleteModal('@user.Id', '@user.Vorname @user.Nachname')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<button class="btn btn-primary" onclick="openCreateModal()">
+    <i class="bi bi-person-plus"></i> Neuer Benutzer
+</button>
+
+<!-- Create Modal -->
+<div class="modal fade" id="createModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Neuer Benutzer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="createAlert" class="d-none"></div>
+                <div class="mb-3">
+                    <label class="form-label">Vorname</label>
+                    <input type="text" id="createVorname" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nachname</label>
+                    <input type="text" id="createNachname" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Benutzername</label>
+                    <input type="text" id="createUserName" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">E-Mail</label>
+                    <input type="email" id="createEmail" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Rolle</label>
+                    <select id="createRolle" class="form-select">
+                        @foreach (var r in ViewBag.Rollen as SelectList)
+                        {
+                            <option value="@r.Value">@r.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Passwort</label>
+                    <input type="password" id="createPasswort" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Passwort wiederholen</label>
+                    <input type="password" id="createPasswortWiederholen" class="form-control" required />
+                    <div id="createPwError" class="text-danger small d-none">Die Passwörter stimmen nicht überein.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                <button type="button" class="btn btn-primary" onclick="submitCreate()">
+                    <i class="bi bi-save"></i> Speichern
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Benutzer bearbeiten</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="editAlert" class="d-none"></div>
+                <input type="hidden" id="editId" />
+                <div class="mb-3">
+                    <label class="form-label">Vorname</label>
+                    <input type="text" id="editVorname" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nachname</label>
+                    <input type="text" id="editNachname" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Benutzername</label>
+                    <input type="text" id="editUserName" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">E-Mail</label>
+                    <input type="email" id="editEmail" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Rolle</label>
+                    <select id="editRolle" class="form-select">
+                        @foreach (var r in ViewBag.Rollen as SelectList)
+                        {
+                            <option value="@r.Value">@r.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Neues Passwort <small class="text-muted">(leer lassen = unverändert)</small></label>
+                    <input type="password" id="editPasswort" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Passwort wiederholen</label>
+                    <input type="password" id="editPasswortWiederholen" class="form-control" />
+                    <div id="editPwError" class="text-danger small d-none">Die Passwörter stimmen nicht überein.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                <button type="button" class="btn btn-primary" onclick="submitEdit()">
+                    <i class="bi bi-save"></i> Speichern
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Benutzer löschen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Sind Sie sicher, dass Sie das Benutzerkonto <strong id="deleteUserName"></strong> löschen wollen?
+                <input type="hidden" id="deleteId" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Nein</button>
+                <button type="button" class="btn btn-danger" onclick="submitDelete()">
+                    <i class="bi bi-trash"></i> Ja, löschen
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function openCreateModal() {
+        document.getElementById('createVorname').value = '';
+        document.getElementById('createNachname').value = '';
+        document.getElementById('createUserName').value = '';
+        document.getElementById('createEmail').value = '';
+        document.getElementById('createPasswort').value = '';
+        document.getElementById('createPasswortWiederholen').value = '';
+        document.getElementById('createPwError').classList.add('d-none');
+        setAlert('createAlert', '', '');
+        new bootstrap.Modal(document.getElementById('createModal')).show();
+    }
+
+    function openEditModal(id, vorname, nachname, userName, email, rolle) {
+        document.getElementById('editId').value = id;
+        document.getElementById('editVorname').value = vorname;
+        document.getElementById('editNachname').value = nachname;
+        document.getElementById('editUserName').value = userName;
+        document.getElementById('editEmail').value = email;
+        document.getElementById('editRolle').value = rolle;
+        document.getElementById('editPasswort').value = '';
+        document.getElementById('editPasswortWiederholen').value = '';
+        document.getElementById('editPwError').classList.add('d-none');
+        setAlert('editAlert', '', '');
+        new bootstrap.Modal(document.getElementById('editModal')).show();
+    }
+
+    function openDeleteModal(id, name) {
+        document.getElementById('deleteId').value = id;
+        document.getElementById('deleteUserName').textContent = name;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+
+    function setAlert(id, type, message) {
+        const el = document.getElementById(id);
+        if (!message) { el.className = 'd-none'; return; }
+        el.className = `alert alert-${type}`;
+        el.textContent = message;
+    }
+
+    async function submitCreate() {
+        const pw = document.getElementById('createPasswort').value;
+        const pw2 = document.getElementById('createPasswortWiederholen').value;
+        if (pw !== pw2) {
+            document.getElementById('createPwError').classList.remove('d-none');
+            return;
+        }
+        document.getElementById('createPwError').classList.add('d-none');
+
+        const response = await fetch('/User/Create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                __RequestVerificationToken: document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '',
+                vorname: document.getElementById('createVorname').value,
+                nachname: document.getElementById('createNachname').value,
+                userName: document.getElementById('createUserName').value,
+                email: document.getElementById('createEmail').value,
+                rolle: document.getElementById('createRolle').value,
+                passwort: pw,
+                passwortWiederholen: pw2
+            })
+        });
+        const result = await response.json();
+        if (result.success) {
+            setAlert('createAlert', 'success', result.message);
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            setAlert('createAlert', 'danger', result.message);
+        }
+    }
+
+    async function submitEdit() {
+        const pw = document.getElementById('editPasswort').value;
+        const pw2 = document.getElementById('editPasswortWiederholen').value;
+        if (pw && pw !== pw2) {
+            document.getElementById('editPwError').classList.remove('d-none');
+            return;
+        }
+        document.getElementById('editPwError').classList.add('d-none');
+
+        const response = await fetch('/User/Edit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                __RequestVerificationToken: document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '',
+                id: document.getElementById('editId').value,
+                vorname: document.getElementById('editVorname').value,
+                nachname: document.getElementById('editNachname').value,
+                userName: document.getElementById('editUserName').value,
+                email: document.getElementById('editEmail').value,
+                rolle: document.getElementById('editRolle').value,
+                passwort: pw,
+                passwortWiederholen: pw2
+            })
+        });
+        const result = await response.json();
+        if (result.success) {
+            setAlert('editAlert', 'success', result.message);
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            setAlert('editAlert', 'danger', result.message);
+        }
+    }
+
+    async function submitDelete() {
+        const id = document.getElementById('deleteId').value;
+        const response = await fetch('/User/Delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                __RequestVerificationToken: document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '',
+                id: id
+            })
+        });
+        const result = await response.json();
+        if (result.success) location.reload();
+    }
+</script>
+@Html.AntiForgeryToken()
+}

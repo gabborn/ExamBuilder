@@ -1,0 +1,50 @@
+@model ExamBuilder.Models.Pruefung
+@{ Layout = null; }
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Model.Titel</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        @@media print {
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="container py-4">
+
+    <div class="mb-4">
+        <h2>@Model.Titel</h2>
+        <p class="text-muted mb-0">
+            <strong>Lehrveranstaltung:</strong> @Model.Lehrveranstaltung?.Titel &nbsp;|&nbsp;
+            <strong>Datum:</strong> @Model.Datum.ToString("dd.MM.yyyy")
+        </p>
+    </div>
+
+    <hr />
+
+    @for (int i = 0; i < Model.McFragen.Count; i++)
+    {
+        var frage = Model.McFragen.ElementAt(i);
+        <div class="mb-4">
+            <p class="fw-bold">@(i + 1). @frage.Fragentext</p>
+            <ul class="list-group">
+                @foreach (var antwort in frage.McAntworten)
+                {
+                    <li class="list-group-item">@antwort.Antworttext</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <div class="no-print mt-4">
+        <button onclick="window.print()" class="btn btn-primary">
+            Drucken
+        </button>
+        <a href="javascript:history.back()" class="btn btn-secondary ms-2">Zurück</a>
+    </div>
+
+</body>
+</html>

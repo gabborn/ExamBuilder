@@ -1,0 +1,45 @@
+@model ExamBuilder.Models.Kapitel
+
+@{
+    ViewData["Title"] = "Neues Kapitel";
+}
+
+<div class="mb-3">
+    <a asp-action="Index" asp-route-lehrveranstaltungId="@ViewBag.LehrveranstaltungId" class="text-muted text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Kapitel
+    </a>
+</div>
+
+<h2>Neues Kapitel</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-5">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+            <input type="hidden" name="LehrveranstaltungId" value="@ViewBag.LehrveranstaltungId" />
+            <div class="mb-3">
+                <label asp-for="Titel" class="form-label"></label>
+                <input asp-for="Titel" class="form-control" />
+                <span asp-validation-for="Titel" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Kapitelnummer" class="form-label"></label>
+                <input asp-for="Kapitelnummer" class="form-control" />
+                <span asp-validation-for="Kapitelnummer" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Vorlesungsfolien (optional)</label>
+                <input type="file" name="datei" class="form-control" accept=".pdf" />
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg"></i> Speichern
+                </button>
+                <a asp-action="Index" asp-route-lehrveranstaltungId="@ViewBag.LehrveranstaltungId" class="btn btn-secondary">
+                    <i class="bi bi-x-lg"></i> Abbrechen
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

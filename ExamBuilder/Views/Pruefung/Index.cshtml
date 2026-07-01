@@ -1,0 +1,53 @@
+@model IEnumerable<ExamBuilder.Models.Pruefung>
+@using ExamBuilder.Models
+
+@{
+    ViewData["Title"] = "Prüfungen";
+    var lv = ViewBag.Lehrveranstaltung as Lehrveranstaltung;
+}
+
+<div class="mb-3">
+    <a asp-controller="Lehrveranstaltung" asp-action="Index" class="text-muted text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Lehrveranstaltungen
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">@lv?.Titel</h5>
+        <p class="card-text mb-0">
+            <span class="text-muted">Dozent:</span> @lv?.Dozentenname &nbsp;|&nbsp;
+            <span class="text-muted">Abschluss:</span> @lv?.Abschlussart
+        </p>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Prüfungen</h4>
+    <a asp-action="Create" asp-route-lehrveranstaltungId="@lv?.Id" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Neue Prüfung erstellen
+    </a>
+</div>
+
+<ul class="list-group">
+    @foreach (var pruefung in Model)
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a asp-action="Drucken" asp-route-id="@pruefung.Id" class="text-decoration-none">
+                <i class="bi bi-printer"></i>
+                <strong>@pruefung.Titel</strong>
+                <span class="text-muted ms-2">@pruefung.Datum.ToString("dd.MM.yyyy")</span>
+                @if (!string.IsNullOrEmpty(pruefung.Beschreibung))
+                {
+                    <span class="text-muted ms-2">— @pruefung.Beschreibung</span>
+                }
+            </a>
+            <form asp-action="Delete" asp-route-id="@pruefung.Id" method="post" class="d-inline">
+                <button type="submit" class="btn btn-sm btn-outline-danger" title="Löschen"
+                        onclick="return confirm('Prüfung wirklich löschen?')">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </form>
+        </li>
+    }
+</ul>

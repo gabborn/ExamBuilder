@@ -1,0 +1,57 @@
+@model IEnumerable<ExamBuilder.Models.Lehrveranstaltung>
+
+@{
+    ViewData["Title"] = "Lehrveranstaltungen";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Lehrveranstaltungen</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Neue Lehrveranstaltung
+    </a>
+</div>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Titel</th>
+            <th>Dozent</th>
+            <th>Abschluss</th>
+            <th>Kapitel</th>
+            <th>Prüfungen</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var lv in Model)
+        {
+            <tr>
+                <td>@lv.Titel</td>
+                <td>@lv.Dozentenname</td>
+                <td>@lv.Abschlussart</td>
+                <td>
+                    <a asp-controller="Kapitel" asp-action="Index" asp-route-lehrveranstaltungId="@lv.Id"
+                       class="badge bg-primary text-decoration-none">
+                        @lv.Kapitel.Count Kapitel
+                    </a>
+                </td>
+                <td>
+                    <a asp-controller="Pruefung" asp-action="Index" asp-route-lehrveranstaltungId="@lv.Id"
+                       class="badge bg-secondary text-decoration-none">
+                        @lv.Pruefungen.Count Prüfungen
+                    </a>
+                </td>
+                <td class="text-end">
+                    <div class="btn-group">
+                        <a asp-action="Edit" asp-route-id="@lv.Id" class="btn btn-sm btn-outline-primary" title="Bearbeiten">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@lv.Id" class="btn btn-sm btn-outline-danger" title="Löschen">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
