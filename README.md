@@ -26,17 +26,32 @@ Azurite emuliert Azure Blob Storage lokal und wird für den PDF-Upload benötigt
 npm install -g azurite
 ```
 
-### 3. Gemini API-Key eintragen
+### 3. appsettings.json erstellen
 
-In `ExamBuilder/appsettings.json` den eigenen API-Key eintragen:
+Die Datei `appsettings.json` ist nicht im Repository enthalten (sie enthält Secrets). Eine neue Datei unter `ExamBuilder/appsettings.json` mit folgendem Inhalt erstellen:
 
 ```json
-"Gemini": {
-  "ApiKey": "DEIN_API_KEY"
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=ExamBuilder.db"
+  },
+  "BlobStorage": {
+    "ConnectionString": "UseDevelopmentStorage=true"
+  },
+  "Gemini": {
+    "ApiKey": "DEIN_API_KEY"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
 }
 ```
 
-Den API-Key erhält man kostenlos über Google AI Studio (nach "Google AI Studio" suchen).
+Den eigenen Gemini API-Key kostenlos über [Google AI Studio](https://aistudio.google.com) erstellen und bei `DEIN_API_KEY` eintragen.
 
 ## App starten
 
@@ -45,7 +60,7 @@ Den API-Key erhält man kostenlos über Google AI Studio (nach "Google AI Studio
 In einem Terminal:
 
 ```
-azurite
+azurite --skipApiVersionCheck
 ```
 
 Dieses Terminal-Fenster offen lassen solange die App läuft.
@@ -53,6 +68,7 @@ Dieses Terminal-Fenster offen lassen solange die App läuft.
 ### Schritt 2 — App starten
 
 In Rider: Run-Button klicken (oder Shift+F10).
+In Visual Studio: grüner Start-Button oder F5.
 
 Die Datenbank wird beim ersten Start automatisch erstellt und mit Demodaten befüllt.
 
@@ -75,5 +91,6 @@ Die Datenbank wird beim ersten Start automatisch erstellt und mit Demodaten bef�
 
 ## Hinweise
 
-- Der Gemini API-Key darf **nicht** in Git eingecheckt werden. Die Datei `appsettings.json` sollte in `.gitignore` eingetragen werden oder der Key über User Secrets verwaltet werden.
-- Die Datenbankdatei `ExamBuilder.db` wird lokal im Projektordner erstellt und sollte ebenfalls nicht in Git eingecheckt werden.
+- Die Datei `appsettings.json` ist in `.gitignore` eingetragen und wird **nicht** mit Git synchronisiert — jedes Teammitglied pflegt seine eigene lokale Kopie.
+- Die Datenbankdatei `ExamBuilder.db` wird lokal erstellt und ist ebenfalls nicht im Repository.
+- Azurite muss mit `--skipApiVersionCheck` gestartet werden, da neuere Azurite-Versionen sonst einen API-Versions-Fehler werfen.

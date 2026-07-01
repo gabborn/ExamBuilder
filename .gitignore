@@ -17,4 +17,5 @@ __azurite_db_*.json
 AzuriteConfig
 
 # Secrets
+appsettings.json
 appsettings.Development.json
