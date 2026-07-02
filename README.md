@@ -38,7 +38,7 @@ npm install -g azurite
 
 ### 3. appsettings.Development.json erstellen
 
-Die Datei `appsettings.Development.json` ist nicht im Repository enthalten. Sie muss manuell unter `ExamBuilder/ExamBuilder/appsettings.Development.json` erstellt werden:
+Die Datei `appsettings.Development.json` ist nicht im Repository enthalten (sie ist in `.gitignore`). Sie muss manuell unter `ExamBuilder/ExamBuilder/appsettings.Development.json` erstellt werden:
 
 ```json
 {
@@ -48,23 +48,16 @@ Die Datei `appsettings.Development.json` ist nicht im Repository enthalten. Sie 
       "Microsoft.AspNetCore": "Warning"
     }
   },
+  "Gemini": {
+    "ApiKey": "DEIN_API_KEY"
+  },
   "ConnectionStrings": {
     "AzureBlobStorage": "UseDevelopmentStorage=true"
   }
 }
 ```
 
-### 4. Gemini API-Key konfigurieren (User Secrets)
-
-Den Gemini API-Key über .NET User Secrets setzen — er landet niemals im Repository.
-
-Im Verzeichnis `ExamBuilder/ExamBuilder` ausführen:
-
-```
-dotnet user-secrets set "Gemini:ApiKey" "DEIN_API_KEY"
-```
-
-Den eigenen API-Key kostenlos über [Google AI Studio](https://aistudio.google.com) erstellen.
+Den eigenen Gemini API-Key kostenlos über [Google AI Studio](https://aistudio.google.com) erstellen und bei `DEIN_API_KEY` eintragen.
 
 ## App starten
 
@@ -104,7 +97,7 @@ Die Datenbank wird beim ersten Start automatisch erstellt und mit Demodaten bef�
 
 ## Hinweise
 
-- Secrets (Gemini API-Key, Blob Storage Connection String) werden über .NET User Secrets gespeichert (`dotnet user-secrets set ...`) und **niemals** in Git eingecheckt. Jedes Teammitglied setzt seine eigenen Secrets lokal.
+- Die Datei `appsettings.Development.json` ist in `.gitignore` und wird **niemals** in Git eingecheckt — jedes Teammitglied pflegt seine eigene lokale Kopie mit dem eigenen Gemini API-Key.
 - Die Datenbankdatei `ExamBuilder.db` wird lokal erstellt und ist ebenfalls nicht im Repository.
 - Azurite muss mit `--skipApiVersionCheck` gestartet werden, da neuere Azurite-Versionen sonst einen API-Versions-Fehler werfen.
 - Der Gemini Free Tier erlaubt 20 Anfragen pro Tag (RPD). Das aktuelle Quota und die Verbrauchsstatistik sind unter [ai.dev/rate-limit](https://ai.dev/rate-limit) einsehbar. Bei Quota-Fehler (`RESOURCE_EXHAUSTED`) entweder bis zum nächsten Tag warten oder einen neuen API-Key in [Google AI Studio](https://aistudio.google.com) erstellen.
