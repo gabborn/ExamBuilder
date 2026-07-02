@@ -36,29 +36,15 @@ npm --version
 npm install -g azurite
 ```
 
-### 3. appsettings.json erstellen
+### 3. Secrets konfigurieren (User Secrets)
 
-Die Datei `appsettings.json` ist nicht im Repository enthalten (sie enthält Secrets). Eine neue Datei unter `ExamBuilder/appsettings.json` mit folgendem Inhalt erstellen:
+API-Key und Blob-Storage-Verbindung werden **nicht** in einer Datei gespeichert, sondern über .NET User Secrets verwaltet. Diese werden niemals in Git eingecheckt.
 
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Data Source=ExamBuilder.db"
-  },
-  "BlobStorage": {
-    "ConnectionString": "UseDevelopmentStorage=true"
-  },
-  "Gemini": {
-    "ApiKey": "DEIN_API_KEY"
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*"
-}
+Im Verzeichnis `ExamBuilder/ExamBuilder` folgende Befehle ausführen:
+
+```
+dotnet user-secrets set "Gemini:ApiKey" "DEIN_API_KEY"
+dotnet user-secrets set "ConnectionStrings:AzureBlobStorage" "UseDevelopmentStorage=true"
 ```
 
 Den eigenen Gemini API-Key kostenlos über [Google AI Studio](https://aistudio.google.com) erstellen und bei `DEIN_API_KEY` eintragen.
@@ -101,7 +87,7 @@ Die Datenbank wird beim ersten Start automatisch erstellt und mit Demodaten bef�
 
 ## Hinweise
 
-- Die Datei `appsettings.json` ist in `.gitignore` eingetragen und wird **nicht** mit Git synchronisiert — jedes Teammitglied pflegt seine eigene lokale Kopie.
+- Secrets (Gemini API-Key, Blob Storage Connection String) werden über .NET User Secrets gespeichert (`dotnet user-secrets set ...`) und **niemals** in Git eingecheckt. Jedes Teammitglied setzt seine eigenen Secrets lokal.
 - Die Datenbankdatei `ExamBuilder.db` wird lokal erstellt und ist ebenfalls nicht im Repository.
 - Azurite muss mit `--skipApiVersionCheck` gestartet werden, da neuere Azurite-Versionen sonst einen API-Versions-Fehler werfen.
 - Der Gemini Free Tier erlaubt 20 Anfragen pro Tag (RPD). Das aktuelle Quota und die Verbrauchsstatistik sind unter [ai.dev/rate-limit](https://ai.dev/rate-limit) einsehbar. Bei Quota-Fehler (`RESOURCE_EXHAUSTED`) entweder bis zum nächsten Tag warten oder einen neuen API-Key in [Google AI Studio](https://aistudio.google.com) erstellen.
