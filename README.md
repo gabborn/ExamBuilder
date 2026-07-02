@@ -36,15 +36,25 @@ npm --version
 npm install -g azurite
 ```
 
-### 3. Secrets konfigurieren (User Secrets)
+### 3. appsettings.Development.json erstellen
 
-API-Key und Blob-Storage-Verbindung werden **nicht** in einer Datei gespeichert, sondern über .NET User Secrets verwaltet. Diese werden niemals in Git eingecheckt.
+Die Datei `appsettings.Development.json` ist nicht im Repository enthalten. Sie muss manuell unter `ExamBuilder/ExamBuilder/appsettings.Development.json` erstellt werden:
 
-Im Verzeichnis `ExamBuilder/ExamBuilder` folgende Befehle ausführen:
-
-```
-dotnet user-secrets set "Gemini:ApiKey" "DEIN_API_KEY"
-dotnet user-secrets set "ConnectionStrings:AzureBlobStorage" "UseDevelopmentStorage=true"
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "Gemini": {
+    "ApiKey": "DEIN_API_KEY"
+  },
+  "ConnectionStrings": {
+    "AzureBlobStorage": "UseDevelopmentStorage=true"
+  }
+}
 ```
 
 Den eigenen Gemini API-Key kostenlos über [Google AI Studio](https://aistudio.google.com) erstellen und bei `DEIN_API_KEY` eintragen.
