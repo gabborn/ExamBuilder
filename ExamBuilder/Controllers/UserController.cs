@@ -27,10 +27,24 @@ public class UserController : Controller
             var roles = await _userManager.GetRolesAsync(user);
             userRoles[user.Id] = roles.FirstOrDefault() ?? "";
         }
+
+        var rollenReihenfolge = new Dictionary<string, int>
+        {
+            { "Administrator", 0 },
+            { "Dozent", 1 },
+            { "Mitarbeiter", 2 }
+        };
+
+        var sortiertUsers = users
+            .OrderBy(u => rollenReihenfolge.TryGetValue(userRoles[u.Id], out var rang) ? rang : 99)
+            .ThenBy(u => u.Nachname)
+            .ThenBy(u => u.Vorname)
+            .ToList();
+
         ViewBag.UserRoles = userRoles;
         ViewBag.Rollen = new SelectList(_roleManager.Roles.OrderBy(r => r.Name).ToList(), "Name", "Name");
         ViewBag.CurrentUserId = _userManager.GetUserId(User);
-        return View(users);
+        return View(sortiertUsers);
     }
 
     [HttpPost]
