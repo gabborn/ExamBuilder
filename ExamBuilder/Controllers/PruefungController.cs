@@ -34,6 +34,7 @@ namespace ExamBuilder.Controllers
         }
 
         // GET: Pruefung/Create?lehrveranstaltungId=5
+        [Authorize(Roles = "Administrator,Dozent")]
         public IActionResult Create(int lehrveranstaltungId)
         {
             ViewBag.LehrveranstaltungId = lehrveranstaltungId;
@@ -43,6 +44,7 @@ namespace ExamBuilder.Controllers
         // POST: Pruefung/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,Dozent")]
         public async Task<IActionResult> Create(
             [Bind("Titel,Datum,Beschreibung,LehrveranstaltungId")] Pruefung pruefung,
             int anzahlFragen)
@@ -79,6 +81,7 @@ namespace ExamBuilder.Controllers
         }
 
         // GET: Pruefung/Delete/5
+        [Authorize(Roles = "Administrator,Dozent")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -95,6 +98,7 @@ namespace ExamBuilder.Controllers
         // POST: Pruefung/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,Dozent")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var pruefung = await _context.Pruefungen

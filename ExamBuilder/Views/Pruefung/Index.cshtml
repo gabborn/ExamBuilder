@@ -24,9 +24,12 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4>Prüfungen</h4>
-    <a asp-action="Create" asp-route-lehrveranstaltungId="@lv?.Id" class="btn btn-primary">
-        <i class="bi bi-plus-lg"></i> Neue Prüfung erstellen
-    </a>
+    @if (User.IsInRole("Administrator") || User.IsInRole("Dozent"))
+    {
+        <a asp-action="Create" asp-route-lehrveranstaltungId="@lv?.Id" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Neue Prüfung erstellen
+        </a>
+    }
 </div>
 
 <ul class="list-group">
@@ -42,12 +45,15 @@
                     <span class="text-muted ms-2">— @pruefung.Beschreibung</span>
                 }
             </a>
-            <form asp-action="Delete" asp-route-id="@pruefung.Id" method="post" class="d-inline">
-                <button type="submit" class="btn btn-sm btn-outline-danger" title="Löschen"
-                        onclick="return confirm('Prüfung wirklich löschen?')">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </form>
+            @if (User.IsInRole("Administrator") || User.IsInRole("Dozent"))
+            {
+                <form asp-action="Delete" asp-route-id="@pruefung.Id" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Löschen"
+                            onclick="return confirm('Prüfung wirklich löschen?')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+            }
         </li>
     }
 </ul>

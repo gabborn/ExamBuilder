@@ -45,6 +45,7 @@ namespace ExamBuilder.Controllers
         }
 
         // GET: Lehrveranstaltung/Create
+        [Authorize(Roles = "Administrator,Dozent")]
         public IActionResult Create()
         {
             ViewBag.AbschlussartList = new SelectList(Enum.GetValues(typeof(Abschlussart)));
@@ -54,6 +55,7 @@ namespace ExamBuilder.Controllers
         // POST: Lehrveranstaltung/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,Dozent")]
         public async Task<IActionResult> Create([Bind("Titel,Dozentenname,Abschlussart")] Lehrveranstaltung lehrveranstaltung)
         {
             if (ModelState.IsValid)
@@ -68,6 +70,7 @@ namespace ExamBuilder.Controllers
         }
 
         // GET: Lehrveranstaltung/Edit/5
+        [Authorize(Roles = "Administrator,Dozent")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -82,6 +85,7 @@ namespace ExamBuilder.Controllers
         // POST: Lehrveranstaltung/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,Dozent")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Titel,Dozentenname,Abschlussart")] Lehrveranstaltung lehrveranstaltung)
         {
             if (id != lehrveranstaltung.Id) return NotFound();
@@ -108,6 +112,7 @@ namespace ExamBuilder.Controllers
         }
 
         // GET: Lehrveranstaltung/Delete/5
+        [Authorize(Roles = "Administrator,Dozent")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -123,6 +128,7 @@ namespace ExamBuilder.Controllers
         // POST: Lehrveranstaltung/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,Dozent")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var lehrveranstaltung = await _context.Lehrveranstaltungen.FindAsync(id);
