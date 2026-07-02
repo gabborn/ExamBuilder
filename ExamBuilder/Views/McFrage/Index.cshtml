@@ -1,0 +1,183 @@
+@model IEnumerable<ExamBuilder.Models.McFrage>
+@using ExamBuilder.Models
+
+@{
+    ViewData["Title"] = "MC-Fragen";
+    var kapitel = ViewBag.Kapitel as Kapitel;
+    var suche = ViewBag.Suche as string;
+    int aktuelleSeite = ViewBag.AktuelleSeite;
+    int gesamtSeiten = ViewBag.GesamtSeiten;
+}
+
+<div class="mb-3">
+    <a asp-controller="Kapitel" asp-action="Index" asp-route-lehrveranstaltungId="@kapitel?.LehrveranstaltungId" class="text-muted text-decoration-none">
+        <i class="bi bi-arrow-left"></i> @kapitel?.Lehrveranstaltung?.Titel &rsaquo; @kapitel?.Titel
+    </a>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>MC-Fragen</h4>
+    <form asp-action="Generieren" method="post">
+        <input type="hidden" name="kapitelId" value="@kapitel?.Id" />
+        <button type="submit" class="btn btn-success" id="btnGenerieren">
+            <i class="bi bi-stars"></i> Neue Frage generieren
+        </button>
+    </form>
+</div>
+
+<form asp-action="Index" method="get" class="d-flex gap-2 mb-4">
+    <input type="hidden" name="kapitelId" value="@kapitel?.Id" />
+    <input type="text" name="suche" value="@suche" class="form-control" placeholder="Fragetext durchsuchen..." />
+    <button type="submit" class="btn btn-outline-primary">
+        <i class="bi bi-search"></i> Suchen
+    </button>
+    <a asp-action="Index" asp-route-kapitelId="@kapitel?.Id" class="btn btn-outline-secondary">
+        <i class="bi bi-x-lg"></i> Zurücksetzen
+    </a>
+</form>
+
+@foreach (var frage in Model)
+{
+    <ul class="list-group mb-3">
+        <li class="list-group-item fw-bold">@frage.Fragentext</li>
+        @foreach (var antwort in frage.McAntworten)
+        {
+            <li class="list-group-item @(antwort.Korrekt ? "list-group-item-success" : "")">
+                @if (antwort.Korrekt)
+                {
+                    <i class="bi bi-check-circle-fill text-success me-1"></i>
+                }
+                @antwort.Antworttext
+            </li>
+        }
+        <li class="list-group-item">
+            <div class="d-flex gap-2">
+                <a asp-action="Edit" asp-route-id="@frage.Id" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-pencil"></i> Bearbeiten
+                </a>
+                <a asp-action="Delete" asp-route-id="@frage.Id" class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash"></i> Löschen
+                </a>
+                <form asp-action="Pruefen" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@frage.Id" />
+                    <button type="submit" class="btn btn-sm btn-outline-secondary btn-pruefen">
+                        <i class="bi bi-robot"></i> Prüfen
+                    </button>
+                </form>
+            </div>
+        </li>
+    </ul>
+}
+
+@if (gesamtSeiten > 1)
+{
+    <nav>
+        <ul class="pagination">
+            <li class="page-item @(aktuelleSeite == 1 ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-kapitelId="@kapitel?.Id"
+                   asp-route-suche="@suche" asp-route-seite="@(aktuelleSeite - 1)">
+                    &laquo;
+                </a>
+            </li>
+            @for (int i = 1; i <= gesamtSeiten; i++)
+            {
+                <li class="page-item @(i == aktuelleSeite ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-kapitelId="@kapitel?.Id"
+                       asp-route-suche="@suche" asp-route-seite="@i">@i</a>
+                </li>
+            }
+            <li class="page-item @(aktuelleSeite == gesamtSeiten ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-kapitelId="@kapitel?.Id"
+                   asp-route-suche="@suche" asp-route-seite="@(aktuelleSeite + 1)">
+                    &raquo;
+                </a>
+            </li>
+        </ul>
+    </nav>
+}
+
+<!-- Modal für KI-Ergebnis -->
+<div class="modal fade" id="kiModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="kiModalTitel">KI-Ergebnis</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="kiModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function setLoading(btn, loading) {
+        if (loading) {
+            btn.disabled = true;
+            btn.dataset.originalHtml = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Bitte warten...';
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = btn.dataset.originalHtml;
+        }
+    }
+
+    // Prüfen-Buttons: Ergebnis im Modal anzeigen
+    document.querySelectorAll('.btn-pruefen').forEach(btn => {
+        btn.closest('form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const form = this;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            setLoading(submitBtn, true);
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: { 'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '' }
+                });
+                const text = await response.text();
+                document.getElementById('kiModalTitel').textContent = 'KI-Prüfung';
+                document.getElementById('kiModalBody').innerHTML = text
+                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                    .replace(/\n/g, '<br/>');
+                new bootstrap.Modal(document.getElementById('kiModal')).show();
+            } finally {
+                setLoading(submitBtn, false);
+            }
+        });
+    });
+
+    // Generieren-Button: Fehlermeldung im Modal anzeigen, bei Erfolg Seite neu laden
+    document.getElementById('btnGenerieren')?.closest('form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const form = this;
+        const submitBtn = document.getElementById('btnGenerieren');
+        setLoading(submitBtn, true);
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '' }
+            });
+            if (response.ok && response.redirected) {
+                window.location.reload();
+            } else if (!response.ok) {
+                const text = await response.text();
+                document.getElementById('kiModalTitel').textContent = 'Fehler beim Generieren';
+                document.getElementById('kiModalBody').textContent = text;
+                new bootstrap.Modal(document.getElementById('kiModal')).show();
+                setLoading(submitBtn, false);
+            } else {
+                window.location.reload();
+            }
+        } catch {
+            setLoading(submitBtn, false);
+        }
+    });
+</script>
+}
