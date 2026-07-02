@@ -94,3 +94,4 @@ Die Datenbank wird beim ersten Start automatisch erstellt und mit Demodaten bef�
 - Die Datei `appsettings.json` ist in `.gitignore` eingetragen und wird **nicht** mit Git synchronisiert — jedes Teammitglied pflegt seine eigene lokale Kopie.
 - Die Datenbankdatei `ExamBuilder.db` wird lokal erstellt und ist ebenfalls nicht im Repository.
 - Azurite muss mit `--skipApiVersionCheck` gestartet werden, da neuere Azurite-Versionen sonst einen API-Versions-Fehler werfen.
+- Der Gemini Free Tier erlaubt 20 Anfragen pro Tag (RPD). Das aktuelle Quota und die Verbrauchsstatistik sind unter [ai.dev/rate-limit](https://ai.dev/rate-limit) einsehbar. Bei Quota-Fehler (`RESOURCE_EXHAUSTED`) entweder bis zum nächsten Tag warten oder einen neuen API-Key in [Google AI Studio](https://aistudio.google.com) erstellen.

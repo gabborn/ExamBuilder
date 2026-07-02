@@ -224,7 +224,7 @@ namespace ExamBuilder.Controllers
         private async Task<string> SendToGemini(string prompt)
         {
             var apiKey = _configuration["Gemini:ApiKey"];
-            var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={apiKey}";
+            var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={apiKey}";
 
             var payload = new
             {
@@ -259,7 +259,7 @@ namespace ExamBuilder.Controllers
         private async Task<string> SendToGeminiWithPdf(string prompt, string pdfBase64)
         {
             var apiKey = _configuration["Gemini:ApiKey"];
-            var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={apiKey}";
+            var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={apiKey}";
 
             var payload = new
             {
