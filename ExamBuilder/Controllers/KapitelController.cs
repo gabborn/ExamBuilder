@@ -86,6 +86,7 @@ namespace ExamBuilder.Controllers
         {
             if (id != kapitel.Id) return NotFound();
 
+            ModelState.Remove("Lehrveranstaltung");
             if (ModelState.IsValid)
             {
                 try
