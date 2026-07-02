@@ -36,8 +36,8 @@
     @foreach (var pruefung in Model)
     {
         <li class="list-group-item d-flex justify-content-between align-items-center">
-            <a asp-action="Drucken" asp-route-id="@pruefung.Id" class="text-decoration-none">
-                <i class="bi bi-printer"></i>
+            <a asp-action="Details" asp-route-id="@pruefung.Id" class="text-decoration-none">
+                <i class="bi bi-eye"></i>
                 <strong>@pruefung.Titel</strong>
                 <span class="text-muted ms-2">@pruefung.Datum.ToString("dd.MM.yyyy")</span>
                 @if (!string.IsNullOrEmpty(pruefung.Beschreibung))

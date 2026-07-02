@@ -1,42 +1,47 @@
 @model ExamBuilder.Models.Pruefung
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Titel;
 }
 
-<h1>Details</h1>
+<div class="mb-3">
+    <a asp-action="Index" asp-route-lehrveranstaltungId="@Model.LehrveranstaltungId" class="text-muted text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Prüfungen
+    </a>
+</div>
 
-<div>
-    <h4>Pruefung</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Titel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Titel)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Datum)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Datum)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Beschreibung)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Beschreibung)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Lehrveranstaltung)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Lehrveranstaltung.Titel)
-        </dd>
-    </dl>
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h2>@Model.Titel</h2>
+    <a asp-action="Drucken" asp-route-id="@Model.Id" target="_blank" class="btn btn-outline-secondary">
+        <i class="bi bi-printer"></i> Drucken
+    </a>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<p class="text-muted mb-4">
+    <strong>Lehrveranstaltung:</strong> @Model.Lehrveranstaltung?.Titel &nbsp;|&nbsp;
+    <strong>Datum:</strong> @Model.Datum.ToString("dd.MM.yyyy")
+</p>
+
+<hr />
+
+@for (int i = 0; i < Model.McFragen.Count; i++)
+{
+    var frage = Model.McFragen.ElementAt(i);
+    <div class="mb-4">
+        <p class="fw-bold">@(i + 1). @frage.Fragentext</p>
+        <ul class="list-group">
+            @foreach (var antwort in frage.McAntworten)
+            {
+                if (antwort.Korrekt)
+                {
+                    <li class="list-group-item list-group-item-success d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success"></i> @antwort.Antworttext
+                    </li>
+                }
+                else
+                {
+                    <li class="list-group-item">@antwort.Antworttext</li>
+                }
+            }
+        </ul>
+    </div>
+}

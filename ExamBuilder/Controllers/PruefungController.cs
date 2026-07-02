@@ -115,6 +115,22 @@ namespace ExamBuilder.Controllers
             return RedirectToAction(nameof(Index), new { lehrveranstaltungId = pruefung?.LehrveranstaltungId });
         }
 
+        // GET: Pruefung/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var pruefung = await _context.Pruefungen
+                .Include(p => p.Lehrveranstaltung)
+                .Include(p => p.McFragen)
+                    .ThenInclude(f => f.McAntworten)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (pruefung == null) return NotFound();
+
+            return View(pruefung);
+        }
+
         // GET: Pruefung/Drucken/5
         public async Task<IActionResult> Drucken(int? id)
         {
