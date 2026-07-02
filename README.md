@@ -18,10 +18,20 @@ git clone <repository-url>
 cd ExamBuilder
 ```
 
-### 2. Azurite installieren
+### 2. Node.js und Azurite installieren
 
-Azurite emuliert Azure Blob Storage lokal und wird für den PDF-Upload benötigt:
+Azurite emuliert Azure Blob Storage lokal und wird für den PDF-Upload benötigt. Azurite wird über npm installiert, das mit Node.js mitgeliefert wird.
 
+**Node.js installieren** (falls noch nicht vorhanden):
+1. [nodejs.org](https://nodejs.org) aufrufen und die **LTS**-Version herunterladen
+2. Installer ausführen
+3. Computer neu starten
+4. Installation prüfen:
+```
+npm --version
+```
+
+**Azurite installieren:**
 ```
 npm install -g azurite
 ```
