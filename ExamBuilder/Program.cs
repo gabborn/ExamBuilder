@@ -10,7 +10,13 @@ builder.Services.AddControllersWithViews();
 
 // DbContext registrieren
 builder.Services.AddDbContext<ExamBuilderContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("ExamBuilderContext")));
+{
+    var connectionString = builder.Configuration.GetConnectionString("ExamBuilderContext");
+    if (builder.Environment.IsDevelopment())
+        options.UseSqlite(connectionString);
+    else
+        options.UseAzureSql(connectionString);
+});
 
 // Identity registrieren (ohne Default-UI)
 builder.Services.AddIdentity<ExamBuilderUser, IdentityRole>(options =>

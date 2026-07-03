@@ -131,9 +131,12 @@ namespace ExamBuilder.Controllers
         [Authorize(Roles = "Administrator,Dozent")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var lehrveranstaltung = await _context.Lehrveranstaltungen.FindAsync(id);
+            var lehrveranstaltung = await _context.Lehrveranstaltungen
+                .Include(lv => lv.Pruefungen)
+                .FirstOrDefaultAsync(lv => lv.Id == id);
             if (lehrveranstaltung != null)
             {
+                _context.Pruefungen.RemoveRange(lehrveranstaltung.Pruefungen);
                 _context.Lehrveranstaltungen.Remove(lehrveranstaltung);
                 await _context.SaveChangesAsync();
             }

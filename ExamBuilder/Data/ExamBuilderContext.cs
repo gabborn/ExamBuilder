@@ -27,12 +27,12 @@ public class ExamBuilderContext : IdentityDbContext<ExamBuilderUser>
             .HasForeignKey(k => k.LehrveranstaltungId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Lehrveranstaltung -> Pruefung (1:n, Cascade Delete)
+        // Lehrveranstaltung -> Pruefung (1:n, kein Cascade wegen SQL Server Mehrfach-Cascade-Pfad)
         modelBuilder.Entity<Pruefung>()
             .HasOne(p => p.Lehrveranstaltung)
             .WithMany(lv => lv.Pruefungen)
             .HasForeignKey(p => p.LehrveranstaltungId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         // Kapitel -> McFrage (1:n, Cascade Delete)
         modelBuilder.Entity<McFrage>()
@@ -48,9 +48,13 @@ public class ExamBuilderContext : IdentityDbContext<ExamBuilderUser>
             .HasForeignKey(a => a.McFrageId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Pruefung <-> McFrage (m:n)
+        // Pruefung <-> McFrage (m:n, NoAction wegen SQL Server Cascade-Pfad-Beschränkung)
         modelBuilder.Entity<Pruefung>()
             .HasMany(p => p.McFragen)
-            .WithMany(f => f.Pruefungen);
+            .WithMany(f => f.Pruefungen)
+            .UsingEntity<Dictionary<string, object>>(
+                "McFragePruefung",
+                r => r.HasOne<McFrage>().WithMany().HasForeignKey("McFragenId").OnDelete(DeleteBehavior.NoAction),
+                l => l.HasOne<Pruefung>().WithMany().HasForeignKey("PruefungenId").OnDelete(DeleteBehavior.NoAction));
     }
 }
