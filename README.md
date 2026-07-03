@@ -1,12 +1,12 @@
 # ExamBuilder
 
-Web-Anwendung zur Unterstützung bei der Erstellung von Multiple-Choice-Klausuren. Entwickelt mit ASP.NET Core MVC, Entity Framework Core und SQLite.
+Web-Anwendung zur Unterstützung bei der Erstellung von Multiple-Choice-Klausuren. Entwickelt mit ASP.NET Core MVC, Entity Framework Core und SQLite (lokal) / Azure SQL (Produktion).
 
 ## Voraussetzungen
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - [Node.js](https://nodejs.org) (für Azurite)
-- [JetBrains Rider](https://www.jetbrains.com/rider/) oder Visual Studio
+- [JetBrains Rider](https://www.jetbrains.com/rider/)
 - Gemini API-Key (kostenlos über Google AI Studio)
 
 ## Installation
@@ -76,7 +76,6 @@ Dieses Terminal-Fenster offen lassen solange die App läuft.
 ### Schritt 2 — App starten
 
 In Rider: Run-Button klicken (oder Shift+F10).
-In Visual Studio: grüner Start-Button oder F5.
 
 Die Datenbank wird beim ersten Start automatisch erstellt und mit Demodaten befüllt.
 
