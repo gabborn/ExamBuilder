@@ -3,6 +3,7 @@ using ExamBuilder.Data;
 using ExamBuilder.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<ExamBuilderContext>(options =>
         options.UseSqlite(connectionString);
     else
         options.UseAzureSql(connectionString);
+    options.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
 });
 
 // Identity registrieren (ohne Default-UI)
