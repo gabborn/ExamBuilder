@@ -187,6 +187,12 @@ namespace ExamBuilder.Controllers
                          $"{{\"text\": \"...\", \"korrekt\": false}}]}}";
 
             var jsonAntwort = await SendToGeminiWithPdf(prompt, pdfBase64);
+            jsonAntwort = jsonAntwort.Trim();
+            if (jsonAntwort.StartsWith("```"))
+            {
+                jsonAntwort = jsonAntwort.Substring(jsonAntwort.IndexOf('\n') + 1);
+                jsonAntwort = jsonAntwort.Substring(0, jsonAntwort.LastIndexOf("```")).Trim();
+            }
 
             JsonDocument doc;
             try
