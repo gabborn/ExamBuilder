@@ -47,12 +47,9 @@
             </a>
             @if (User.IsInRole("Administrator") || User.IsInRole("Dozent"))
             {
-                <form asp-action="Delete" asp-route-id="@pruefung.Id" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Löschen"
-                            onclick="return confirm('Prüfung wirklich löschen?')">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </form>
+                <a asp-action="Delete" asp-route-id="@pruefung.Id" class="btn btn-sm btn-outline-danger" title="Löschen">
+                    <i class="bi bi-trash"></i>
+                </a>
             }
         </li>
     }

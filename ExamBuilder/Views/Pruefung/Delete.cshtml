@@ -1,45 +1,41 @@
 @model ExamBuilder.Models.Pruefung
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Prüfung löschen";
 }
 
-<h1>Delete</h1>
-
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Pruefung</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Titel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Titel)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Datum)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Datum)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Beschreibung)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Beschreibung)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Lehrveranstaltung)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Lehrveranstaltung.Titel)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+<div class="mb-3">
+    <a asp-action="Index" asp-route-lehrveranstaltungId="@Model.LehrveranstaltungId" class="text-muted text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Prüfungen
+    </a>
 </div>
+
+<h2>Prüfung löschen</h2>
+<hr />
+
+<dl class="row mb-3">
+    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Titel)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(model => model.Titel)</dd>
+    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Datum)</dt>
+    <dd class="col-sm-9">@Model.Datum.ToString("dd.MM.yyyy")</dd>
+    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Beschreibung)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(model => model.Beschreibung)</dd>
+    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Lehrveranstaltung)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(model => model.Lehrveranstaltung.Titel)</dd>
+</dl>
+
+<div class="alert alert-danger">
+    Sind Sie sicher, dass diese Prüfung gelöscht werden soll?
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Löschen
+        </button>
+        <a asp-action="Index" asp-route-lehrveranstaltungId="@Model.LehrveranstaltungId" class="btn btn-secondary">
+            <i class="bi bi-x-lg"></i> Abbrechen
+        </a>
+    </div>
+</form>
