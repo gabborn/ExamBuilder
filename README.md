@@ -4,7 +4,7 @@ Web-Anwendung zur Unterstützung bei der Erstellung von Multiple-Choice-Klausure
 
 ## Voraussetzungen
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - [Node.js](https://nodejs.org) (für Azurite)
 - [JetBrains Rider](https://www.jetbrains.com/rider/) oder Visual Studio
 - Gemini API-Key (kostenlos über Google AI Studio)
@@ -59,6 +59,8 @@ Die Datei `appsettings.Development.json` ist nicht im Repository enthalten (sie 
 
 Den eigenen Gemini API-Key kostenlos über [Google AI Studio](https://aistudio.google.com) erstellen und bei `DEIN_API_KEY` eintragen.
 
+> **Wichtig:** Die `AzureBlobStorage` Connection String für lokale Entwicklung mit Azurite lautet immer `UseDevelopmentStorage=true` — das ist kein Secret und kann so übernommen werden.
+
 ## App starten
 
 ### Schritt 1 — Azurite starten
@@ -97,7 +99,7 @@ Die Datenbank wird beim ersten Start automatisch erstellt und mit Demodaten bef�
 
 ## Hinweise
 
-- Die Datei `appsettings.Development.json` ist in `.gitignore` und wird **niemals** in Git eingecheckt — jedes Teammitglied pflegt seine eigene lokale Kopie mit dem eigenen Gemini API-Key.
+- Die Datei `appsettings.Development.json` ist in `.gitignore` und wird **niemals** in Git eingecheckt — jedes Teammitglied pflegt seine eigene lokale Kopie mit dem eigenen Gemini API-Key. Sie wird außerdem beim Deployment nach Azure automatisch ausgeschlossen (`CopyToPublishDirectory=Never` in der `.csproj`).
 - Die Datenbankdatei `ExamBuilder.db` wird lokal erstellt und ist ebenfalls nicht im Repository.
 - Azurite muss mit `--skipApiVersionCheck` gestartet werden, da neuere Azurite-Versionen sonst einen API-Versions-Fehler werfen.
 - Der Gemini Free Tier erlaubt 20 Anfragen pro Tag (RPD). Das aktuelle Quota und die Verbrauchsstatistik sind unter [ai.dev/rate-limit](https://ai.dev/rate-limit) einsehbar. Bei Quota-Fehler (`RESOURCE_EXHAUSTED`) entweder bis zum nächsten Tag warten oder einen neuen API-Key in [Google AI Studio](https://aistudio.google.com) erstellen.
