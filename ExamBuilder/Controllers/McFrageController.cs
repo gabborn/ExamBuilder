@@ -101,6 +101,38 @@ namespace ExamBuilder.Controllers
             return RedirectToAction(nameof(Index), new { kapitelId = mcFrage.KapitelId });
         }
 
+        // GET: McFrage/Create
+        public async Task<IActionResult> Create(int kapitelId)
+        {
+            var kapitel = await _context.Kapitel.FindAsync(kapitelId);
+            if (kapitel == null) return NotFound();
+
+            ViewBag.KapitelId = kapitel.Id;
+            return View();
+        }
+
+        // POST: McFrage/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(int kapitelId, string fragentext,
+            List<string> antworttexte, int korrektIndex)
+        {
+            var mcFrage = new McFrage
+            {
+                Fragentext = fragentext,
+                KapitelId = kapitelId,
+                McAntworten = antworttexte.Select((text, i) => new McAntwort
+                {
+                    Antworttext = text,
+                    Korrekt = i == korrektIndex
+                }).ToList()
+            };
+
+            _context.McFragen.Add(mcFrage);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index), new { kapitelId });
+        }
+
         // GET: McFrage/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
